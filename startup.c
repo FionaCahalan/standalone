@@ -8,7 +8,7 @@ int main(int argc, char *argv[]);
 _Noreturn void _exit(int code){
     asm("syscall"
         :
-        : "A" (__NR_exit_group),
+        : "a" (__NR_exit_group),
           "D" (code)
         );
         __builtin_unreachable();
