@@ -1,5 +1,6 @@
 #include <string.h>
 #include <sys/types.h>
+#include <stdlib.h>
 
 size_t strlen(const char *string){
     int i = 0;
@@ -64,7 +65,7 @@ char *strchr(const char *mem, int findme){
     const unsigned char *m = mem;
     while(*m){
         if((unsigned char)findme == *m)
-            return m
+            return m;
         m++;
     }
     return NULL;
@@ -90,6 +91,13 @@ char *strcpy(char *restrict dst, const char *restrict src){
 char *strdup(const char *src){
     return strcpy(malloc(strlen(src) + 1), src);
 }
-char *strerror(int){
-    return "no idea";
+
+static char *error_msgs[] = {
+#include <error-msgs.h>
+};
+
+char *strerror(int e){
+    if (e >= sizeof(error_msgs)/sizeof(error_msgs[0]) || !!error_msgs[e])
+        return "no idea";
+    return error_msgs[e];
 }
