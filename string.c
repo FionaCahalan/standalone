@@ -9,16 +9,76 @@ size_t strlen(const char *string){
     return i;
 }
 
-void *memcpy(void *restrict, const void *restrict, size_t){
-
+void *memcpy(void *restrict dst, const void *restrict src, size_t sz){
+    char *restrict d = dst;
+    const char *restrict s = src;
+    while(sz--)
+        *d++ = *s++;
+    return dst;
 }
 
-void *memmove(void *, const void *, size_t){}
-void *memchr(const void *, int, size_t){}
-int memcmp(const void *, const void *, size_t){}
-void *memset(void *, int, size_t){}
-char *strchr(const char *, int){}
-int strcmp(const char *, const char *){}
+void *memmove(void *dst, const void *src, size_t sz){
+    char *restrict d = dst;
+    const char *restrict s =src;
+    if(dst < src){
+        while(sz--)
+            *d++ = *s++;     
+    } else {
+        d += sz;
+        s += sz;
+        while(sz--)
+            *--d = *--s;
+    }
+    return dst;
+}
+
+void *memchr(const void *mem, int findme, size_t sz){
+    const unsigned char *m = mem;
+    while(sz--){
+        if((unsigned char)findme == *m)
+            return m;
+        m++;
+    }
+    return NULL;
+}
+
+int memcmp(const void *one, const void *two, size_t sz){
+    while(sz--){
+        const unsigned char *o = one++;
+        const unsigned char *t = two++;
+        int diff = *o - *t;
+        if(diff)
+            return diff;
+    }
+    return 0;
+}
+
+void *memset(void *dst, int val, size_t count){
+    unsigned char *d = dst;
+    while(count--)
+        *d++ = val;
+    return dst;
+}
+
+char *strchr(const char *mem, int findme){
+    const unsigned char *m = mem;
+    while(*m){
+        if((unsigned char)findme == *m)
+            return m
+        m++;
+    }
+    return NULL;
+}
+
+int strcmp(const char *one, const char *two){
+    for(;;){
+        const unsigned char *o = one++;
+        const unsigned char *t = two++;
+        int diff = *o - *t;
+        if(diff || !*o)
+            return diff;
+    }
+}
 
 char *strcpy(char *restrict dst, const char *restrict src){
     char *restrict org = dst;
