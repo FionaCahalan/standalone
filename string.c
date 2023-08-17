@@ -1,6 +1,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <errno.h>
 
 size_t strlen(const char *string){
     int i = 0;
@@ -93,7 +94,7 @@ char *strdup(const char *src){
 }
 
 static char *error_msgs[] = {
-#include <error-msgs.h>
+#include <errno-msgs.h>
 };
 
 char *strerror(int e){

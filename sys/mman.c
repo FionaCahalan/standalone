@@ -1,5 +1,6 @@
 #include <sys/mman.h>
 #include "/usr/include/asm/unistd_64.h"
+#include <errno.h>
 
 void *mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset){
     long ret;
@@ -11,6 +12,10 @@ void *mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset){
         : "a"(__NR_mmap), "D" (addr), "S" (len), "d" (prot), "r" (r10), "r" (r8), "r" (r9)
         : "rcx", "r11", "memory"
     );
+    if((unsigned long)ret > ~0xffful){
+        errno = -ret;
+        ret = -1;
+    }
     return (void*)ret;
 }
 
@@ -21,5 +26,9 @@ int munmap(void *addr, size_t len){
         : "a"(__NR_munmap), "D" (addr), "S" (len)
         : "rcx", "r11", "memory"
     );
+    if((unsigned long)ret > ~0xffful){
+        errno = -ret;
+        return -1;
+    }
     return ret;
 }
