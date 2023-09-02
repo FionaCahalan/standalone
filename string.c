@@ -38,7 +38,7 @@ void *memchr(const void *mem, int findme, size_t sz){
     const unsigned char *m = mem;
     while(sz--){
         if((unsigned char)findme == *m)
-            return m;
+            return (void *)m;
         m++;
     }
     return NULL;
@@ -63,10 +63,10 @@ void *memset(void *dst, int val, size_t count){
 }
 
 char *strchr(const char *mem, int findme){
-    const unsigned char *m = mem;
+    const unsigned char *m = (unsigned char *)mem;
     while(*m){
         if((unsigned char)findme == *m)
-            return m;
+            return (char *)m;
         m++;
     }
     return NULL;
@@ -74,17 +74,17 @@ char *strchr(const char *mem, int findme){
 
 int strcmp(const char *one, const char *two){
     for(;;){
-        const unsigned char *o = one++;
-        const unsigned char *t = two++;
-        int diff = *o - *t;
-        if(diff || !*o)
+        const unsigned char o = *++one;
+        const unsigned char t = *++two;
+        int diff = o - t;
+        if(diff || !o)
             return diff;
     }
 }
 
 char *strcpy(char *restrict dst, const char *restrict src){
     char *restrict org = dst;
-    while(*dst++ = *src++)
+    while((*dst++ = *src++))
         ;
     return org;
 }
@@ -98,7 +98,8 @@ static char *error_msgs[] = {
 };
 
 char *strerror(int e){
-    if (e >= sizeof(error_msgs)/sizeof(error_msgs[0]) || !!error_msgs[e])
+    size_t e2 = e;
+    if (e2 >= sizeof(error_msgs)/sizeof(error_msgs[0]) || !!error_msgs[e2])
         return "no idea";
-    return error_msgs[e];
+    return error_msgs[e2];
 }

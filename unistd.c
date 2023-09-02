@@ -1,7 +1,7 @@
 #include <unistd.h>
-#include <sys/types.h>
 #include "/usr/include/asm/unistd_64.h"
 #include <errno.h>
+#include <fcntl.h>
 
 ssize_t write(int fd, const void *buf, size_t count){
     long ret_value;

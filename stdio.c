@@ -1,3 +1,6 @@
+#include <fcntl.h>
+#include <stdio.h>
+
 struct _FILE{
     int flags;
     int fd;
@@ -12,6 +15,13 @@ static struct _FILE stds[3] = {
 struct _FILE *stdin = stds + STDIN_FILENO;
 struct _FILE *stdout = stds + STDOUT_FILENO;
 struct _FILE *stderr = stds + STDERR_FILENO;
+
+int fclose(FILE *stream){
+    if(stream == stds[STDERR_FILENO] || stream == stds[STDIN_FILENO] || stream == stds[STDOUT_FILENO])
+        return 0;
+    close(stream->fd);
+    free(stream);
+}
 
 static int make_mode_num (const char *restrict mode){
     int mode_num = 0;
@@ -68,3 +78,21 @@ FILE *freopen(const char *restrict pathname, const char *restrict mode, FILE *re
     return stream;
 }
 
+size_t fread(void *restrict ptr, size_t size, size_t nmemb,FILE *restrict stream){
+    ssize_t rc = read(stream->fd, ptr, size*nmemb);
+    if(rc == -1){
+        stream->flags |= STDIO_ERROR;
+        return 0
+    } else if (!rc){
+        stream->flags |= STDIO_EOF;
+    }
+    return rc/size;
+}
+size_t fwrite(const void *restrict ptr, size_t size, size_t nmemb, FILE *restrict stream){
+    ssize_t rc = write(stream->fd, ptr, size*nmemb);
+    if(rc == -1){
+        stream->flags |= STDIO_ERROR;
+        return 0
+    }
+    return rc/size;
+}
